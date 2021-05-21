@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <p class="lead">A Simple Login Page</p>
+</div>
+<div class="row">
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+        Username :
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+        <input type="text" id="IDTxtUserName" placeholder="Please enter Username" class="form-control input-md" />
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+        Password :
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+        <input type="password" id="IDTxtPassword" placeholder="Please enter password" class="form-control input-md" />
+    </div>
+</div>
+<br/>
+<div class="row">
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12">
+        <input type="button" value="Login" id="BtnSubmit" class="btn btn-success" />
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-12">
+        <input type="button" value="Forgot Password" id="BtnFwPassword" class="btn btn-info" />
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script type="text/javascript">
+    function AbsoluteURL(url) {
+        var path = '@Request.ApplicationPath'
+        if (path == '/') {
+            return url;
+        }
+        else {
+            return path + url;
+        }
+    }
+
+    $(document).ready(function () {
+        //Btn submit click
+        $("#BtnSubmit").click(function () {
+            if ($("#IDTxtUserName").val() == "") {
+                alert("Please enter username");
+            }
+            else if ($("#IDTxtPassword").val() == "") {
+                alert("Please enter password");
+            }
+            else {
+                var UName = $("#IDTxtUserName").val();
+                var pwd = $("#IDTxtPassword").val();
+                $.ajax({
+                    async: false,
+                    type:'POST',
+                    url: AbsoluteURL("/Home/LoginAuthenticate?UserNameInp=" + UName + "&PasswordInp=" + pwd),
+                    cache: false,
+                    success: function (resp) {
+                        if (resp.isActive == true) {
+                            if (resp.retmsg == "Success") {
+                                window.location.href = AbsoluteURL("/Home/About");
+                            }
+                            else {
+                                alert("Please check your credentials");
+                            }
+                        }
+                        else {
+                            alert("User is inactive");
+                        }
+                    }
+                })
+            }
+        })
+    })
+</script>

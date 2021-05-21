@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SampleDBModel1" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="GNM_PlantDetails">
+    <Key>
+      <PropertyRef Name="PlantID" />
+    </Key>
+    <Property Name="PlantID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PlantName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="PlantLocation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="TR_MaterialDetails" Relationship="Self.FK_MaterialDetails_PlantID" FromRole="GNM_PlantDetails" ToRole="TR_MaterialDetails" />
+  </EntityType>
+  <EntityType Name="GNM_Status">
+    <Key>
+      <PropertyRef Name="StatusID" />
+    </Key>
+    <Property Name="StatusID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="StatusName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="TR_MaterialDetails" Relationship="Self.FK_MaterialDetails_StatusID" FromRole="GNM_Status" ToRole="TR_MaterialDetails" />
+  </EntityType>
+  <EntityType Name="GNM_User">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="UserIsActive" Type="Boolean" />
+    <Property Name="EmailID" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="TR_MaterialDetails" Relationship="Self.FK_MaterialDetails_CreatedBy" FromRole="GNM_User" ToRole="TR_MaterialDetails" />
+  </EntityType>
+  <EntityType Name="TR_MaterialDetails">
+    <Key>
+      <PropertyRef Name="MaterialID" />
+    </Key>
+    <Property Name="MaterialID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="MaterialName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="StatusID" Type="Int32" Nullable="false" />
+    <Property Name="PlantID" Type="Int32" Nullable="false" />
+    <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="GNM_PlantDetails" Relationship="Self.FK_MaterialDetails_PlantID" FromRole="TR_MaterialDetails" ToRole="GNM_PlantDetails" />
+    <NavigationProperty Name="GNM_Status" Relationship="Self.FK_MaterialDetails_StatusID" FromRole="TR_MaterialDetails" ToRole="GNM_Status" />
+    <NavigationProperty Name="GNM_User" Relationship="Self.FK_MaterialDetails_CreatedBy" FromRole="TR_MaterialDetails" ToRole="GNM_User" />
+  </EntityType>
+  <Association Name="FK_MaterialDetails_PlantID">
+    <End Role="GNM_PlantDetails" Type="Self.GNM_PlantDetails" Multiplicity="1" />
+    <End Role="TR_MaterialDetails" Type="Self.TR_MaterialDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GNM_PlantDetails">
+        <PropertyRef Name="PlantID" />
+      </Principal>
+      <Dependent Role="TR_MaterialDetails">
+        <PropertyRef Name="PlantID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MaterialDetails_StatusID">
+    <End Role="GNM_Status" Type="Self.GNM_Status" Multiplicity="1" />
+    <End Role="TR_MaterialDetails" Type="Self.TR_MaterialDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GNM_Status">
+        <PropertyRef Name="StatusID" />
+      </Principal>
+      <Dependent Role="TR_MaterialDetails">
+        <PropertyRef Name="StatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MaterialDetails_CreatedBy">
+    <End Role="GNM_User" Type="Self.GNM_User" Multiplicity="1" />
+    <End Role="TR_MaterialDetails" Type="Self.TR_MaterialDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GNM_User">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="TR_MaterialDetails">
+        <PropertyRef Name="CreatedBy" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="PlantModelEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="GNM_PlantDetails" EntityType="Self.GNM_PlantDetails" />
+    <EntitySet Name="GNM_Status" EntityType="Self.GNM_Status" />
+    <EntitySet Name="GNM_User" EntityType="Self.GNM_User" />
+    <EntitySet Name="TR_MaterialDetails" EntityType="Self.TR_MaterialDetails" />
+    <AssociationSet Name="FK_MaterialDetails_PlantID" Association="Self.FK_MaterialDetails_PlantID">
+      <End Role="GNM_PlantDetails" EntitySet="GNM_PlantDetails" />
+      <End Role="TR_MaterialDetails" EntitySet="TR_MaterialDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MaterialDetails_StatusID" Association="Self.FK_MaterialDetails_StatusID">
+      <End Role="GNM_Status" EntitySet="GNM_Status" />
+      <End Role="TR_MaterialDetails" EntitySet="TR_MaterialDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MaterialDetails_CreatedBy" Association="Self.FK_MaterialDetails_CreatedBy">
+      <End Role="GNM_User" EntitySet="GNM_User" />
+      <End Role="TR_MaterialDetails" EntitySet="TR_MaterialDetails" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

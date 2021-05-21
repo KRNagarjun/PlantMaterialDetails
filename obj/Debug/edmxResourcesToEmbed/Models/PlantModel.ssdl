@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SampleDBModel1.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="GNM_PlantDetails">
+    <Key>
+      <PropertyRef Name="PlantID" />
+    </Key>
+    <Property Name="PlantID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PlantName" Type="nvarchar(max)" />
+    <Property Name="PlantLocation" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="GNM_Status">
+    <Key>
+      <PropertyRef Name="StatusID" />
+    </Key>
+    <Property Name="StatusID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="StatusName" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="GNM_User">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserName" Type="varchar(max)" />
+    <Property Name="Password" Type="varchar" MaxLength="50" />
+    <Property Name="UserIsActive" Type="bit" />
+    <Property Name="EmailID" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="TR_MaterialDetails">
+    <Key>
+      <PropertyRef Name="MaterialID" />
+    </Key>
+    <Property Name="MaterialID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MaterialName" Type="varchar(max)" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="StatusID" Type="int" Nullable="false" />
+    <Property Name="PlantID" Type="int" Nullable="false" />
+    <Property Name="CreatedBy" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_MaterialDetails_CreatedBy">
+    <End Role="GNM_User" Type="Self.GNM_User" Multiplicity="1" />
+    <End Role="TR_MaterialDetails" Type="Self.TR_MaterialDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GNM_User">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="TR_MaterialDetails">
+        <PropertyRef Name="CreatedBy" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MaterialDetails_PlantID">
+    <End Role="GNM_PlantDetails" Type="Self.GNM_PlantDetails" Multiplicity="1" />
+    <End Role="TR_MaterialDetails" Type="Self.TR_MaterialDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GNM_PlantDetails">
+        <PropertyRef Name="PlantID" />
+      </Principal>
+      <Dependent Role="TR_MaterialDetails">
+        <PropertyRef Name="PlantID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MaterialDetails_StatusID">
+    <End Role="GNM_Status" Type="Self.GNM_Status" Multiplicity="1" />
+    <End Role="TR_MaterialDetails" Type="Self.TR_MaterialDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GNM_Status">
+        <PropertyRef Name="StatusID" />
+      </Principal>
+      <Dependent Role="TR_MaterialDetails">
+        <PropertyRef Name="StatusID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="SampleDBModel1StoreContainer">
+    <EntitySet Name="GNM_PlantDetails" EntityType="Self.GNM_PlantDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="GNM_Status" EntityType="Self.GNM_Status" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="GNM_User" EntityType="Self.GNM_User" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TR_MaterialDetails" EntityType="Self.TR_MaterialDetails" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_MaterialDetails_CreatedBy" Association="Self.FK_MaterialDetails_CreatedBy">
+      <End Role="GNM_User" EntitySet="GNM_User" />
+      <End Role="TR_MaterialDetails" EntitySet="TR_MaterialDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MaterialDetails_PlantID" Association="Self.FK_MaterialDetails_PlantID">
+      <End Role="GNM_PlantDetails" EntitySet="GNM_PlantDetails" />
+      <End Role="TR_MaterialDetails" EntitySet="TR_MaterialDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MaterialDetails_StatusID" Association="Self.FK_MaterialDetails_StatusID">
+      <End Role="GNM_Status" EntitySet="GNM_Status" />
+      <End Role="TR_MaterialDetails" EntitySet="TR_MaterialDetails" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

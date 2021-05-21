@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Material Details";
+}
+<h2>@ViewBag.Title</h2>
+<br/>
+<html>
+<head>
+    <style>
+        .TdCls{
+            text-align:center;
+            background-color:navajowhite;
+            font-weight:bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+            Select Plant :
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+            <select id="DDLPlantName" class="form-control input-md">
+            </select>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+            Select Status :
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+            <select id="DDLStatus" class="form-control input-md"></select>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+            <input type="button" class="btn btn-info" id="BtnReload" value="Reload Table" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <table border="1" style="width:65%" id="TblData"></table>
+        </div>
+    </div>
+</body>
+</html>
+
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script type="text/javascript">
+     function AbsoluteURL(url) {
+        var path = '@Request.ApplicationPath'
+        if (path == '/') {
+            return url;
+        }
+        else {
+            return path + url;
+        }
+    }
+
+    $(document).ready(function () {
+        //load dropdowns
+        $.ajax({
+            async: false,
+            url: AbsoluteURL("/Home/LoadDropdowns?PlantID=" + PlantID + "&StatusID=" + StatusID),
+            cache: false,
+            success: function (resp) {
+                if (resp.NameID.length > 0) {
+                    $("#DDLPlantName").append("<option value='0'>--SELECT--</option>");
+                    for (var i = 0; i < resp.NameID.length; i++) {
+                        $("#DDLPlantName").append("<option value=" + resp.NameID[i].ID + ">" + resp.NameID[i].Name + "</option>");
+                    }
+                }
+
+
+                if (resp.NameID2.length > 0) {
+                    $("#DDLStatus").append("<option value='0'>--SELECT--</option>");
+                    for (var i = 0; i < resp.NameID2.length; i++) {
+                        $("#DDLStatus").append("<option value=" + resp.NameID2[i].ID + ">" + resp.NameID2[i].Name + "</option>");
+                    }
+                }
+            }
+        });
+
+        //load table
+        var PlantID = $("#DDLPlantName").find('option:selected').val();
+        var StatusID = $("#DDLStatus").find('option:selected').val();
+
+        $.ajax({
+            async: false,
+            url: AbsoluteURL("/Home/GetMaterialDetails?PlantID=" + PlantID + "&StatusID=" + StatusID),
+            cache: false,
+            success: function (resp) {
+                if (resp._RetList.length > 0) {
+                    $("#TblData").append("<tr><td class='TdCls'>Material</td><td class='TdCls'>Created Date</td><td class='TdCls'>Plant</td><td class='TdCls'>Status</td class='TdCls'><td class='TdCls'>Created By</td></tr>");
+
+                    for (var i = 0; i < resp._RetList.length; i++) {
+                        $("#TblData").append("<tr><td>" + resp._RetList[i].MaterialName + "</td><td>" + resp._RetList[i].CreatedDate + "</td><td>" + resp._RetList[i].PlantName + "</td><td>" + resp._RetList[i].StatusName + "</td><td>" + resp._RetList[i].UserName + "</td></tr>");
+                    }
+                }
+            }
+        });
+
+        $("#BtnReload").click(function () {
+            $("#TblData").empty();
+            var PlantID1 = $("#DDLPlantName").find('option:selected').val();
+            var StatusID1 = $("#DDLStatus").find('option:selected').val();
+            $.ajax({
+                async: false,
+                url: AbsoluteURL("/Home/GetMaterialDetails?PlantID=" + PlantID1 + "&StatusID=" + StatusID1),
+                cache: false,
+                success: function (resp) {
+                    if (resp._RetList.length > 0) {
+                        $("#TblData").append("<tr><td class='TdCls'>Material</td><td class='TdCls'>Created Date</td><td class='TdCls'>Plant</td><td class='TdCls'>Status</td class='TdCls'><td class='TdCls'>Created By</td></tr>");
+
+                        for (var i = 0; i < resp._RetList.length; i++) {
+                            $("#TblData").append("<tr><td>" + resp._RetList[i].MaterialName + "</td><td>" + resp._RetList[i].CreatedDate + "</td><td>" + resp._RetList[i].PlantName + "</td><td>" + resp._RetList[i].StatusName + "</td><td>" + resp._RetList[i].UserName + "</td></tr>");
+                        }
+                    }
+                }
+            })
+        });
+
+    });
+</script>
